@@ -1,0 +1,965 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  AppSealing Code Sample
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+*  [Swift Security Alert GUI Code : ViewController.swift]
+*
+*
+=============================================================================================================================================================
+
+override func viewDidAppear(_ animated: Bool)
+{
+    super.viewDidAppear( animated );
+
+    //############################################################## AppSealing Code-Part BEGIN: DO NOT MODIFY THIS LINE !!!
+    let inst: AppSealingInterface = AppSealingInterface();
+    let tamper: Int32 = inst._IsAbnormalEnvironmentDetected();
+    if ( tamper > 0 )
+    {
+        var msg = "Abnormal Environment Detected !!";
+        if ( tamper & DETECTED_JAILBROKEN ) > 0
+            { msg += "\n - Jailbroken"; }
+        if ( tamper & DETECTED_DRM_DECRYPTED ) > 0
+            { msg += "\n - Executable is not encrypted"; }
+        if ( tamper & DETECTED_DEBUG_ATTACHED ) > 0
+            { msg += "\n - App is debugged"; }
+        if ( tamper & ( DETECTED_HASH_INFO_CORRUPTED | DETECTED_HASH_MODIFIED )) > 0
+            { msg += "\n - App integrity corrupted"; }
+        if ( tamper & ( DETECTED_CODESIGN_CORRUPTED | DETECTED_EXECUTABLE_CORRUPTED )) > 0
+            { msg += "\n - App executable has corrupted"; }
+        if ( tamper & DETECTED_CERTIFICATE_CHANGED ) > 0
+            { msg += "\n - App has re-signed"; }
+        if ( tamper & DETECTED_BLACKLIST_CORRUPTED ) > 0
+            { msg += "\n - Blacklist/Whitelist has corrupted or missing"; }
+        if ( tamper & DETECTED_CHEAT_TOOL ) > 0
+            { msg += "\n - Cheat tool has detected"; }
+            
+        let alertController = UIAlertController(title: "AppSealing", message: msg, preferredStyle: .alert );
+        alertController.addAction(UIAlertAction(title: "Confirm", style: .default,
+                                handler: { (action:UIAlertAction!) -> Void in
+                            #if !DEBUG   // Debug mode does not kill app even if security threat has found
+                                    exit(0);
+                            #endif
+                                } ));
+        self.present(alertController, animated: true, completion: nil);
+    }
+
+        AppSealingInterface._NotifySwizzlingDetected( { (msg: String?) -> () in
+            let alertController = UIAlertController( title: "AppSealing Security", message: msg, preferredStyle: .alert )
+            alertController.addAction( UIAlertAction( title: "Confirm", style: .default,
+                                                      handler: { ( action:UIAlertAction! ) -> Void in
+                            #if !DEBUG
+                                exit(0);
+                            #endif
+            } ));
+            self.present( alertController, animated: true, completion: nil );
+        }
+        );
+
+
+    //############################################################## AppSealing Code-Part END: DO NOT MODIFY THIS LINE !!!
+}
+
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* [Swift Security Alert GUI Code : AppDelegate.swift]
+*
+*
+=============================================================================================================================================================
+
+func application(_ application: UIApplication, didFinishLaunchingWithOptions
+     launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
+{
+    // Override point for customization after application launch.
+
+      //############################################################## AppSealing Code-Part BEGIN: DO NOT MODIFY THIS LINE !!!
+      let inst: AppSealingInterface = AppSealingInterface();
+      let tamper: Int32 = inst._IsAbnormalEnvironmentDetected();
+      if ( tamper > 0 )
+      {
+          var msg = "Abnormal Environment Detected !!";
+          if ( tamper & DETECTED_JAILBROKEN ) > 0
+              { msg += "\n - Jailbroken"; }
+          if ( tamper & DETECTED_DRM_DECRYPTED ) > 0
+              { msg += "\n - Executable is not encrypted"; }
+          if ( tamper & DETECTED_DEBUG_ATTACHED ) > 0
+              { msg += "\n - App is debugged"; }
+          if ( tamper & ( DETECTED_HASH_INFO_CORRUPTED | DETECTED_HASH_MODIFIED )) > 0
+              { msg += "\n - App integrity corrupted"; }
+          if ( tamper & ( DETECTED_CODESIGN_CORRUPTED | DETECTED_EXECUTABLE_CORRUPTED )) > 0
+              { msg += "\n - App executable has corrupted"; }
+          if ( tamper & DETECTED_CERTIFICATE_CHANGED ) > 0
+              { msg += "\n - App has re-signed"; }
+          if ( tamper & DETECTED_BLACKLIST_CORRUPTED ) > 0
+              { msg += "\n - Blacklist/Whitelist has corrupted or missing"; }
+          if ( tamper & DETECTED_CHEAT_TOOL ) > 0
+              { msg += "\n - Cheat tool has detected"; }
+
+          let alertController = UIAlertController(title: "AppSealing", message: msg, preferredStyle: .alert );
+          alertController.addAction(UIAlertAction(title: "Confirm", style: .default,
+                                  handler: { (action:UIAlertAction!) -> Void in
+                              #if !DEBUG   // Debug mode does not kill app even if security threat has found
+                                      exit(0);
+                              #endif
+                                  } ));
+          DispatchQueue.main.async {
+              self.window?.rootViewController?.present( alertController, animated: true, completion: nil)
+          };
+      }
+
+      AppSealingInterface._NotifySwizzlingDetected( { (msg: String?) -> () in
+          let alertController = UIAlertController( title: "AppSealing Security", message: msg, preferredStyle: .alert );
+          alertController.addAction( UIAlertAction( title: "Confirm", style: .default,
+                                                      handler: { ( action:UIAlertAction! ) -> Void in
+  #if DEBUG
+  #else
+              exit(0);
+  #endif
+          } ));
+          
+          DispatchQueue.main.async {
+              self.window?.rootViewController?.present( alertController, animated: true, completion: nil )
+          };
+      });
+
+      //############################################################## AppSealing Code-Part END: DO NOT MODIFY THIS LINE !!!
+    return true;
+}
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* [Objective-C Security Alert GUI Code : ViewController.mm]
+*
+*
+=============================================================================================================================================================
+
+#include "AppsealingiOS.h"
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    //############################################################## AppSealing Code-Part BEGIN: DO NOT MODIFY THIS LINE !!!
+    int tamper = ObjC_IsAbnormalEnvironmentDetected();
+    if ( tamper > 0 )
+    {
+        NSString* msg = @"Abnormal Environment Detected !!";
+        if (( tamper & DETECTED_JAILBROKEN ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Jailbroken"];
+        if (( tamper & DETECTED_DRM_DECRYPTED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Executable is not encrypted"];
+        if (( tamper & DETECTED_DEBUG_ATTACHED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App is debugged"];
+        if (( tamper & ( DETECTED_HASH_INFO_CORRUPTED | DETECTED_HASH_MODIFIED )) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App integrity corrupted"];
+        if (( tamper & ( DETECTED_CODESIGN_CORRUPTED | DETECTED_EXECUTABLE_CORRUPTED )) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App executable has corrupted"];
+        if (( tamper & DETECTED_CERTIFICATE_CHANGED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App has re-signed"];
+        if (( tamper & DETECTED_BLACKLIST_CORRUPTED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Blacklist/Whitelist has corrupted or missing"];
+        if (( tamper & DETECTED_CHEAT_TOOL ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Cheat tool has detected"];
+
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"AppSealing"
+                                       message:msg
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm"
+                                     style:UIAlertActionStyleDefault
+                                     handler:^(UIAlertAction * _Nonnull action) {
+                                #if !DEBUG && !defined(DEBUG) // Debug mode does not kill app even if security threat has found
+                                        exit(0);
+                                #endif
+                                    }];
+        [alert addAction:confirm];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+
+
+    [AppSealingInterface _NotifySwizzlingDetected:^(NSString* msg){
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"AppSealing"
+                                       message:msg
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm"
+                                     style:UIAlertActionStyleDefault
+                                     handler:^(UIAlertAction * _Nonnull action) {
+                                #if !DEBUG && !defined(DEBUG) // Debug mode does not kill app even if security threat has found
+                                        exit(0);
+                                #endif
+                                    }];
+        [alert addAction:confirm];
+        [self presentViewController:alert animated:YES completion:nil];
+    }];
+    //############################################################## AppSealing Code-Part END: DO NOT MODIFY THIS LINE !!!
+}
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* [React Native (up to 0.70.x) Security Alert GUI Code : AppDelegate.mm]
+*
+*
+=============================================================================================================================================================
+
+-(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+#ifdef FB_SONARKIT_ENABLED
+    InitializeFlipper(application);
+#endif
+
+    RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                   moduleName:@"MyRnApp064"
+                                            initialProperties:nil];
+
+    if (@available(iOS 13.0, *)) {
+        rootView.backgroundColor = [UIColor systemBackgroundColor];
+    } else {
+        rootView.backgroundColor = [UIColor whiteColor];
+    }
+
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    UIViewController *rootViewController = [UIViewController new];
+    rootViewController.view = rootView;
+    self.window.rootViewController = rootViewController;
+    [self.window makeKeyAndVisible];
+
+    //############################################################## AppSealing Code-Part BEGIN: DO NOT MODIFY THIS LINE !!!
+    NSString* msg = @"\n-------------------------------------\n* AppSealing Device ID : ";
+    char _appSealingDeviceID[64];
+
+    // query AppSealing device unique identifier (optional)
+    if ( ObjC_GetAppSealingDeviceID( _appSealingDeviceID ) == 0 )
+        msg = [msg stringByAppendingString:[[NSString alloc] initWithUTF8String:_appSealingDeviceID]];
+    else
+        msg = [msg stringByAppendingString:@"Unknown"];  // verification abnormalEnvironmentDetected result (optional)
+    int tamper = ObjC_IsAbnormalEnvironmentDetected();
+
+    char _appSealingCredential[290] = { 0, };   
+    ObjC_GetEncryptedCredential( _appSealingCredential );
+    
+    // credential 값을 인증 정보와 함께 서버로 올린다
+    //BOOL loginResult = processLogin( userID, password, _appSealingCredential );
+
+    NSLog( @"AppSealing Security Threat = %08X", tamper );
+    if ( tamper > 0 )
+    {
+        msg = [msg stringByAppendingString:@"\n\n-------------------------------------\n Abnormal Environment Detected !!\n-------------------------------------"];
+        if (( tamper & DETECTED_JAILBROKEN ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Jailbroken"];
+        if (( tamper & DETECTED_DRM_DECRYPTED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Executable is not encrypted"];
+        if (( tamper & DETECTED_DEBUG_ATTACHED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App is debugged"];
+        if (( tamper & ( DETECTED_HASH_INFO_CORRUPTED | DETECTED_HASH_MODIFIED )) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App integrity corrupted"];
+        if (( tamper & ( DETECTED_CODESIGN_CORRUPTED | DETECTED_EXECUTABLE_CORRUPTED )) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App executable has corrupted"];
+        if (( tamper & DETECTED_CERTIFICATE_CHANGED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - App has re-signed"];
+        if (( tamper & DETECTED_BLACKLIST_CORRUPTED ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Blacklist/Whitelist has corrupted or missing"];
+        if (( tamper & DETECTED_CHEAT_TOOL ) > 0 )
+            msg = [msg stringByAppendingString:@"\n - Cheat tool detected"];
+            
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"AppSealing"
+                                    message:msg
+                                    preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) { exit(0); }];
+        [alert addAction:confirm];
+        [rootViewController presentViewController:alert animated:YES completion:^{}];
+    }
+  
+    [AppSealingInterface _NotifySwizzlingDetected:^(NSString* msg){
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"AppSealing"
+                    message:msg
+                    preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) { exit(0); }];
+        [alert addAction:confirm];
+        [rootViewController presentViewController:alert animated:YES completion:^{}];
+    }];
+
+    //############################################################## AppSealing Code-Part END: DO NOT MODIFY THIS LINE !!!
+    return YES;
+}
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* [React Native (from 0.71.x) Security Alert GUI Code : index.js]
+*
+*
+=============================================================================================================================================================
+
+//############################################################## AppSealing Code-Part BEGIN: DO NOT MODIFY THIS LINE !!!
+import {Alert, NativeModules} from 'react-native';
+
+const DETECTED_JAILBROKEN           = 0x00000001;
+const DETECTED_DRM_DECRYPTED        = 0x00000002;
+const DETECTED_DEBUG_ATTACHED       = 0x00000004;
+const DETECTED_HASH_INFO_CORRUPTED  = 0x00000008;
+const DETECTED_CODESIGN_CORRUPTED   = 0x00000010;
+const DETECTED_HASH_MODIFIED        = 0x00000020;
+const DETECTED_EXECUTABLE_CORRUPTED = 0x00000040;
+const DETECTED_CERTIFICATE_CHANGED  = 0x00000080;
+const DETECTED_BLACKLIST_CORRUPTED  = 0x00000100;
+const DETECTED_CHEAT_TOOL           = 0x00000200;
+
+try
+{
+    const {AppSealingInterfaceBridge} = NativeModules;
+
+    let security_threat = parseInt( AppSealingInterfaceBridge.IsAbnormalEnvironmentDetectedRN() );
+    if ( security_threat > 0 )
+    {
+        // Show GUI
+        let msg = "\n--------------------------------------"
+                + "\nAbnormal Environment Detected !!"
+                + "\n--------------------------------------\n";
+        if (( security_threat & DETECTED_JAILBROKEN ) > 0 )
+            msg += "\n - Jailbroken";
+        if (( security_threat & DETECTED_DRM_DECRYPTED ) > 0 )
+            msg += "\n - Executable is not encrypted";
+        if (( security_threat & DETECTED_DEBUG_ATTACHED ) > 0 )
+            msg += "\n - App is debugged";
+        if (( security_threat & DETECTED_HASH_INFO_CORRUPTED ) > 0 || ( security_threat & DETECTED_HASH_MODIFIED ) > 0 )
+            msg += "\n - App integrity has broken";
+        if (( security_threat & DETECTED_CODESIGN_CORRUPTED ) > 0 || ( security_threat & DETECTED_EXECUTABLE_CORRUPTED ) > 0 )
+            msg += "\n - App executable has corrupted";
+        if (( security_threat & DETECTED_CERTIFICATE_CHANGED ) > 0 )
+            msg += "\n - App has re-signed";
+        if (( security_threat & DETECTED_BLACKLIST_CORRUPTED ) > 0 )
+            msg += "\n - Blacklist/whitelist has corrupted";
+        if (( security_threat & DETECTED_CHEAT_TOOL ) > 0 )
+            msg += "\n - Cheat tool has detected";
+        console.log( "AppSealing Security Threat: " + msg );
+        Alert.alert( "AppSealing Security Threat", msg,
+            [{ text: "Confirm", onPress: () => { AppSealingInterfaceBridge.ExitApp(); }}], { cancelable: false } );
+    }
+}
+catch( e )
+{
+    console.log( "### AppSealing Security Check : " + e.ToString() );
+}
+
+AppSealingPeriodicAlerted = false;
+function AppSealingPeriodicCheck() {
+    if( AppSealingPeriodicAlerted ){
+        return;
+    }
+    try
+    {
+        const {AppSealingInterfaceBridge} = NativeModules;
+
+        let ret = parseInt( AppSealingInterfaceBridge.IsSwizzlingDetectedReturnRN() );
+        
+        if ( ret >= 1 && ret <= 3 )
+        {
+            // Show GUI
+            let msg = "\n--------------------------------------"
+                    + "\nAbnormal Environment Detected !!"
+                    + "\n--------------------------------------\n";
+            if ( ret == 1 )
+                msg += "\n - Jailbroken";
+            if ( ret == 2 )
+                msg += "\n - Method Swizzling";
+            if ( ret == 3 )
+                msg += "\n - Method Hooking";
+    
+            console.log( "AppSealing Security Threat: " + msg );
+            Alert.alert( "AppSealing Security Threat", msg, [{ text: "Confirm", onPress: () => { AppSealingInterfaceBridge.ExitApp(); }}], { cancelable: false } );
+
+            AppSealingPeriodicAlerted = true;
+        }    
+    }
+    catch( e )
+    {
+        console.log( "### AppSealing Security Check : " + e.ToString() );
+    }
+}
+setInterval(AppSealingPeriodicCheck, 2500); // 2.5ms
+//############################################################## AppSealing Code-Part END: DO NOT MODIFY THIS LINE !!!
+
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* Fastfile code for Swift / Objective-C / Flutter / Cordova / Ionic / React-native project
+*
+*
+=============================================================================================================================================================
+default_platform(:ios)
+
+before_all do
+  ENV["FASTLANE_USER"] = "<Your apple ID>"
+  ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] = "<Your apple app-specific-password>"
+  ENV['PROFILE'] = "<Your provisioning profile name for distribution>"
+end
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # 프로젝트 루트 경로 가져오기
+    project_root = File.expand_path("..", __dir__)
+
+    # Xcode 프로젝트 또는 워크스페이스 파일 동적으로 검색
+    xcode_file_path = Dir.glob(File.join(project_root, "*.xcworkspace")).first || Dir.glob(File.join(project_root, "*.xcodeproj")).first
+    if xcode_file_path.nil?
+      UI.user_error!("[AppSealing] No Xcode project or workspace found in the project root directory: #{project_root}")
+    end
+
+    # 프로젝트 이름 및 스킴 자동 추출
+    project_name = File.basename(xcode_file_path, File.extname(xcode_file_path)) # 확장자를 제거한 프로젝트 이름
+
+    # 스킴 자동 검색
+    scheme_name = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      scheme_name = sh("xcodebuild -list -#{xcode_file_path.end_with?('.xcworkspace') ? 'workspace' : 'project'} #{File.basename(xcode_file_path)} | grep 'Schemes:' -A 1 | tail -n 1").strip
+    end
+
+    if scheme_name.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve scheme name from Xcode project or workspace.")
+    end
+
+    # 번들 ID 동적으로 추출
+    bundle_id = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      bundle_id_command = "xcodebuild -showBuildSettings -scheme #{scheme_name} | grep 'PRODUCT_BUNDLE_IDENTIFIER' | awk -F ' = ' '{print $2}'"
+      bundle_id_output = sh(bundle_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+      bundle_id = bundle_id_output.last.strip
+    end
+
+    if bundle_id.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve Bundle ID from Xcode project.")
+    end
+
+    # Team ID 동적으로 추출
+    team_id = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      team_id_command = "xcodebuild -showBuildSettings -scheme #{scheme_name} | grep 'DEVELOPMENT_TEAM' | awk -F ' = ' '{print $2}'"
+      team_id_output = sh(team_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+      team_id = team_id_output.last.strip
+    end
+
+    if team_id.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve Team ID from Xcode project.")
+    end
+
+    UI.message "[AppSealing] Project Name: #{project_name}"
+    UI.message "[AppSealing] Scheme Name: #{scheme_name}"
+    UI.message "[AppSealing] Bundle ID: #{bundle_id}"
+    UI.message "[AppSealing] Team ID: #{team_id}"
+
+    # 빌드 및 IPA 파일 생성
+    archive_path = File.join(project_root, "build", "#{project_name}.xcarchive")
+    ipa_output_path = File.join(project_root, "build")
+
+    # build_ios_app 호출 시 workspace와 project 옵션 분리 처리
+    build_options = {
+      scheme: scheme_name,
+      export_method: "app-store",
+      clean: true,
+      output_directory: ipa_output_path,
+      output_name: "#{project_name}.ipa",
+      export_options: {
+        provisioningProfiles: {
+          bundle_id => ENV["PROFILE"]
+        }
+      }
+    }
+
+    if xcode_file_path.end_with?(".xcworkspace")
+      build_options[:workspace] = xcode_file_path
+      build_options[:project] = nil
+    else
+      build_options[:project] = xcode_file_path
+      build_options[:workspace] = nil
+    end
+
+    build_ios_app(build_options)
+
+    # .ipa 파일 경로 설정
+    ipa_path = File.join(ipa_output_path, "#{project_name}.ipa")
+
+    unless File.exist?(ipa_path)
+      UI.user_error!("[AppSealing] IPA file not found at path: #{ipa_path}")
+    end
+
+    UI.message "[AppSealing] IPA Path: #{ipa_path}"
+
+    # generate_hash 스크립트 경로 동적 검색 및 실행
+    generate_hash_script = Dir.glob(File.join(project_root, "**/generate_hash")).first
+
+    if generate_hash_script.nil?
+      if File.exist?(File.join(project_root, "AppSealingSDK", "Tools", "generate_hash"))
+        # 일반 프로젝트용 경로
+        generate_hash_script = File.join(project_root, "AppSealingSDK", "Tools", "generate_hash")
+      else
+        # React Native 프로젝트용 경로
+        generate_hash_script = File.join(project_root, "AppSealingSDK", "generate_hash")
+      end
+    end
+      
+    unless File.exist?(generate_hash_script)
+      UI.user_error!("[AppSealing] generate_hash script not found at path: #{generate_hash_script}")
+    end
+    
+    unless File.executable?(generate_hash_script)
+      sh("chmod +x '#{generate_hash_script}'")
+    end
+    
+    sh("#{generate_hash_script} #{File.absolute_path(ipa_path)}")
+
+     # Step 2: Upload the IPA to TestFlight with callback
+     begin
+       upload_to_testflight(
+         ipa: ipa_path,
+         skip_waiting_for_build_processing: true, # 빌드 처리 대기 시간 생략
+       )      
+       UI.success("[AppSealing] Upload to TestFlight completed successfully!")
+       
+     rescue => e
+       UI.error("[AppSealing] Upload to TestFlight failed with error: #{e.message}")
+       raise e
+       
+     ensure
+       # Always delete the build directory, even if an error occurs
+       if Dir.exist?(ipa_output_path)
+         UI.message("[AppSealing] Deleting build directory: #{ipa_output_path}")
+         FileUtils.rm_rf(ipa_output_path)
+         UI.message("[AppSealing] Build directory deleted.")
+       else
+         UI.message("[AppSealing] Build directory not found or already deleted.")
+       end
+     end
+   end
+end
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* Fastfile code for Unity3D exported project
+*
+*
+=============================================================================================================================================================
+default_platform(:ios)
+
+before_all do
+  ENV["FASTLANE_USER"] = "<Your apple ID>"
+  ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] = "<Your apple app-specific-password>"
+  ENV['PROFILE'] = "<Your provisioning profile name for distribution>"
+end
+
+platform :ios do
+desc "Push a new beta build to TestFlight"
+lane :beta do
+    # Fastfile 상위 디렉토리 경로 가져오기
+    project_path = File.expand_path("..", __dir__) # Fastfile 기준 상위 디렉토리
+
+    # Xcode 프로젝트 파일(.xcodeproj) 경로 동적으로 검색
+    xcodeproj_path = Dir.glob("#{project_path}/**/*.xcodeproj").first
+
+    if xcodeproj_path.nil?
+    UI.user_error!("[AppSealing] No .xcodeproj file found in #{project_path} or its subdirectories") # 에러 처리
+    end
+
+    UI.message("[AppSealing] Found Xcode project at: #{xcodeproj_path}")
+
+    # Xcode 프로젝트에서 앱 이름 동적으로 가져오기
+    app_name = sh("xcodebuild -list -project #{xcodeproj_path} | grep 'Targets:' -A 1 | tail -n 1").strip
+
+    if app_name.empty?
+    UI.user_error!("[AppSealing] Failed to retrieve app name from Xcode project")
+    end
+
+    # Xcode 프로젝트에서 번들 ID 동적으로 가져오기
+    bundle_id_command = "xcodebuild -showBuildSettings -project #{xcodeproj_path} -scheme #{app_name} | grep 'PRODUCT_BUNDLE_IDENTIFIER' | awk -F ' = ' '{print $2}'"
+    bundle_id_output = sh(bundle_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+    bundle_id = bundle_id_output.last.strip
+
+    if bundle_id.empty?
+    UI.user_error!("[AppSealing] Failed to retrieve Bundle ID from Xcode project")
+    end
+
+    # Xcode 프로젝트에서 Team ID (DEVELOPMENT_TEAM) 동적으로 가져오기
+    team_id_command = "xcodebuild -showBuildSettings -project #{xcodeproj_path} -scheme #{app_name} | grep 'DEVELOPMENT_TEAM' | awk -F ' = ' '{print $2}'"
+    team_id_output = sh(team_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+    team_id = team_id_output.last.strip
+
+    if team_id.empty?
+    UI.user_error!("[AppSealing] Failed to retrieve Team ID from Xcode project")
+    end
+
+    UI.message("[AppSealing] Team ID fetched: #{team_id}")
+
+    archive_path = "#{project_path}/build/#{app_name}.xcarchive" # Archive 절대 경로
+    ipa_output_path = "#{project_path}/build" # IPA 저장 경로
+    entitlements_path = "#{ipa_output_path}/#{app_name}.entitlements" # 엔타이틀먼트 파일 경로
+
+    # Step 1: Archive the project
+    gym(
+    scheme: app_name,
+    project: xcodeproj_path,
+    output_directory: ipa_output_path,
+    archive_path: archive_path,
+    clean: true,
+    skip_package_ipa: true # IPA 생성은 건너뜀
+    )
+
+    # Step 2: Find the .app directory dynamically
+    app_directory = "#{archive_path}/Products/Applications"
+    app_file = Dir.glob("#{app_directory}/*.app").first # .app 파일 검색
+
+    if app_file.nil?
+    UI.user_error!("[AppSealing] No .app file found in #{app_directory}") # 에러 처리
+    end
+
+    UI.message("[AppSealing] .app file found at: #{app_file}")
+
+    # Step 3: Dynamically fetch the correct codesign identity
+    codesign_identity = `security find-identity -v -p codesigning | grep "#{team_id}" | grep "Distribution" | awk -F '"' '{print $2}'`.strip
+
+    if codesign_identity.empty?
+    UI.user_error!("[AppSealing] Failed to find a valid codesigning identity for Team ID: #{team_id}")
+    end
+
+    UI.message("[AppSealing] Code signing identity fetched: #{codesign_identity}")
+
+    # Step 4: Create an entitlements file dynamically using the fetched bundle ID and team ID
+    File.open(entitlements_path, "w") do |file|
+    file.write <<~XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+        <key>application-identifier</key>
+        <string>#{team_id}.#{bundle_id}</string>
+        <key>aps-environment</key>
+        <string>production</string>
+        </dict>
+        </plist>
+    XML
+    end
+
+    UI.message("[AppSealing] Entitlements file created at #{entitlements_path}")
+
+    # Step 5: Re-sign the app with the new entitlements file and dynamic codesign identity
+    binary_name = `/usr/libexec/PlistBuddy -c "Print :CFBundleExecutable" "#{app_file}/Info.plist"`.strip
+    binary_path = "#{app_file}/#{binary_name}"
+
+    sh("codesign --force --sign '#{codesign_identity}' --entitlements #{entitlements_path} #{binary_path}")
+
+    gym(
+    export_method: "app-store", # 배포 방식 (예: app-store, ad-hoc 등)
+    archive_path: archive_path,
+    output_directory: ipa_output_path,
+    output_name: "#{app_name}.ipa", # 최종 IPA 파일 이름
+    export_options: {
+        provisioningProfiles: {
+            "#{bundle_id}" => ENV["PROFILE"]
+            }
+        }
+    )
+
+    # generate_hash 스크립트 경로 동적 검색
+    generate_hash_script = Dir.glob(File.join(project_path, "**/generate_hash")).first
+    if generate_hash_script.nil?
+    UI.user_error!("generate_hash script not found in the project directory or its subdirectories.")
+    end
+    
+    # Grant execute permission for generate_hash script and execute it 
+    sh("chmod +x #{generate_hash_script}")
+    sh("#{generate_hash_script} #{File.absolute_path(File.join("#{ipa_output_path}", "#{app_name}.ipa"))}")
+
+    # Upload TestFlight 
+    begin 
+    upload_to_testflight(
+        ipa: "#{ipa_output_path}/#{app_name}.ipa", # 생성된 IPA 파일 경로 지정
+        skip_waiting_for_build_processing: true, # 빌드 처리 대기 시간 생략
+    )      
+    UI.success("[AppSealing] Upload to TestFlight completed successfully!")
+    
+    rescue => e
+    UI.error("[AppSealing] Upload to TestFlight failed with error: #{e.message}")
+    raise e
+    
+    ensure
+    # Always delete the build directory, even if an error occurs
+    if Dir.exist?(ipa_output_path)
+        UI.message("[AppSealing] Deleting build directory: #{ipa_output_path}")
+        FileUtils.rm_rf(ipa_output_path)
+        UI.message("[AppSealing] Build directory deleted.")
+    else
+        UI.message("[AppSealing] Build directory not found or already deleted.")
+    end
+    end
+  end
+end
+
+
+=============================================================================================================================================================
+=============================================================================================================================================================
+*
+*
+* Fastfile code for Swift / Objective-C project on Github Action
+*
+*
+=============================================================================================================================================================
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    require 'net/http'
+    require 'uri'
+    require 'json'
+    require 'jwt'
+
+    # 프로젝트 루트 경로 가져오기 (Fastfile 기준 상위 디렉토리)
+    project_root = File.expand_path("..", __dir__)
+    fastlane_path = File.expand_path(".", __dir__)
+
+    KEY_ID = ENV['APP_STORE_CONNECT_KEY_ID'] # GitHub Actions Secret에서 가져오기
+    ISSUER_ID = ENV['APP_STORE_CONNECT_ISSUER_ID'] # GitHub Actions Secret에서 가져오기
+    PRIVATE_KEY_CONTENT = ENV['APP_STORE_CONNECT_PRIVATE_KEY'] # 개인 키 내용을 환경 변수로 가져오기
+    
+    unless KEY_ID && ISSUER_ID && PRIVATE_KEY_CONTENT
+      UI.user_error!("Missing required App Store Connect credentials. Ensure APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and APP_STORE_CONNECT_PRIVATE_KEY are set as environment variables.")
+    end
+
+    # Xcode 프로젝트(.xcodeproj) 또는 워크스페이스(.xcworkspace) 파일 자동 검색
+    xcode_file_path = Dir.glob(File.join(project_root, "*.xcworkspace")).first || Dir.glob(File.join(project_root, "*.xcodeproj")).first
+    if xcode_file_path.nil?
+      UI.user_error!("[AppSealing] No Xcode project or workspace found in the project root directory: #{project_root}")
+    end
+
+    # 프로젝트 이름 및 스킴 자동 추출
+    project_name = File.basename(xcode_file_path, File.extname(xcode_file_path)) # 확장자를 제거한 프로젝트 이름
+
+    # 스킴 자동 검색
+    scheme_name = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      scheme_name = sh("xcodebuild -list -#{xcode_file_path.end_with?('.xcworkspace') ? 'workspace' : 'project'} #{File.basename(xcode_file_path)} | grep 'Schemes:' -A 1 | tail -n 1").strip
+    end
+
+    if scheme_name.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve scheme name from Xcode project or workspace.")
+    end
+
+    UI.message "[AppSealing] Project Name: #{project_name}"
+    UI.message "[AppSealing] Scheme Name: #{scheme_name}"
+
+    # 번들 ID 동적으로 추출
+    bundle_id = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      bundle_id_command = "xcodebuild -showBuildSettings -scheme #{scheme_name} | grep 'PRODUCT_BUNDLE_IDENTIFIER' | awk -F ' = ' '{print $2}'"
+      bundle_id_output = sh(bundle_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+      bundle_id = bundle_id_output.last.strip
+    end
+
+    if bundle_id.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve Bundle ID from Xcode project.")
+    end
+
+    UI.message "[AppSealing] Bundle ID: #{bundle_id}"
+
+    # Team ID 동적으로 추출
+    team_id = ""
+    Dir.chdir(File.dirname(xcode_file_path)) do
+      team_id_command = "xcodebuild -showBuildSettings -scheme #{scheme_name} | grep 'DEVELOPMENT_TEAM' | awk -F ' = ' '{print $2}'"
+      team_id_output = sh(team_id_command).lines.map(&:strip).reject { |line| line.include?("WARNING") || line.empty? }
+      team_id = team_id_output.last.strip
+    end
+
+    if team_id.empty?
+      UI.user_error!("[AppSealing] Failed to retrieve Team ID from Xcode project.")
+    end
+
+    UI.message "[AppSealing] Team ID: #{team_id}"
+
+    # JWT 토큰 생성 함수
+    def generate_jwt_token(private_key_content)
+      private_key = OpenSSL::PKey::EC.new(private_key_content)      
+      payload = {
+        iss: ISSUER_ID,
+        exp: Time.now.to_i + 20 * 60, # 20분 유효기간
+        aud: "appstoreconnect-v1"
+      }
+      header = { kid: KEY_ID }
+      JWT.encode(payload, private_key, 'ES256', header)
+    end    
+
+    # Xcode 프로젝트에서 CFBundleShortVersionString (마케팅 버전) 가져오기 함수
+    def fetch_version_from_xcode(xcodeproj_path, scheme_name)
+      version_command = "xcodebuild -project #{xcodeproj_path} -scheme #{scheme_name} -showBuildSettings | grep MARKETING_VERSION | sed 's/[ ]*MARKETING_VERSION = //'"
+      version = `#{version_command}`.strip
+
+      if version.empty?
+        UI.user_error!("Failed to retrieve MARKETING_VERSION from Xcode project.")
+      end
+
+      UI.message("[AppSealing] Retrieved MARKETING_VERSION: #{version}")
+      version
+    end
+
+    # 최신 빌드 번호 가져오기 함수
+    def fetch_latest_build_number(jwt_token, bundle_id, version)
+      # App ID 가져오기 (필요 시)
+      app_id = fetch_app_id(jwt_token, bundle_id)
+
+      # API 요청 URL
+      uri = URI("https://api.appstoreconnect.apple.com/v1/builds?filter[app]=#{app_id}&filter[preReleaseVersion.version]=#{version}&sort=-version")
+      request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{jwt_token}"
+
+      # API 요청 실행
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(request)
+      end
+
+      # 응답 처리
+      if response.code.to_i == 200
+        builds = JSON.parse(response.body)['data']
+        if builds && !builds.empty?
+          latest_build_number = builds.first['attributes']['version'].to_i
+          return latest_build_number
+        else
+          UI.message("[AppSealing] No builds found for version #{version}.")
+        end
+      else
+        UI.error("[AppSealing] Failed to fetch builds: #{response.code} - #{response.body}")
+      end
+
+      nil # 빌드를 찾지 못한 경우 nil 반환
+    end
+
+    # App ID 가져오기 함수 (필요 시 사용)
+    def fetch_app_id(jwt_token, bundle_id)
+      uri = URI("https://api.appstoreconnect.apple.com/v1/apps?filter[bundleId]=#{bundle_id}")
+      request = Net::HTTP::Get.new(uri)
+      request['Authorization'] = "Bearer #{jwt_token}"
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(request)
+      end
+
+      if response.code.to_i == 200
+        apps = JSON.parse(response.body)['data']
+        if apps && !apps.empty?
+          app_id = apps.first['id']
+          return app_id
+        else
+          UI.user_error!("[AppSealing] No app found with bundle ID: #{bundle_id}")
+        end
+      else
+        UI.error("[AppSealing] Failed to fetch app ID: #{response.code} - #{response.body}")
+        UI.user_error!("[AppSealing] Unable to retrieve app ID for bundle ID: #{bundle_id}")
+      end
+
+      nil # 앱 ID를 찾지 못한 경우 nil 반환
+    end
+
+    # JWT 토큰 생성 및 최신 빌드 번호 가져오기
+    jwt_token = generate_jwt_token(PRIVATE_KEY_CONTENT)
+    version = fetch_version_from_xcode(xcode_file_path, scheme_name)
+    latest_build_number = fetch_latest_build_number(jwt_token, bundle_id, version)
+
+    if latest_build_number.nil?
+      UI.message("[AppSealing] No builds found for version #{version}. Starting with build number 1.")
+      new_build_number = 1
+    else
+      new_build_number = latest_build_number + 1
+      UI.message("[AppSealing] Latest Build Number: #{latest_build_number}")
+    end
+
+    # 새로운 빌드 번호 설정 (Xcode 프로젝트에 적용)
+    increment_build_number(
+      build_number: new_build_number,
+      xcodeproj: xcode_file_path # Xcode 프로젝트 경로 명시
+    )
+
+    UI.message "[AppSealing] Updated Build Number: #{new_build_number}"
+
+    # 빌드 및 IPA 파일 생성
+    archive_path = File.join(project_root, "build", "#{project_name}.xcarchive")
+    ipa_output_path = File.join(project_root, "build")
+
+    build_ios_app(
+      scheme: scheme_name,
+      export_method: "app-store",
+      clean: true,
+      output_directory: ipa_output_path,
+      output_name: "#{project_name}.ipa",
+      workspace: xcode_file_path.end_with?(".xcworkspace") ? xcode_file_path : nil,
+      project: xcode_file_path.end_with?(".xcodeproj") ? xcode_file_path : nil,
+      export_options: {
+        provisioningProfiles: {
+          bundle_id => ENV["PROFILE"]
+        }
+      },
+      xcargs: "CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{ENV['PROFILE']}\"",
+      codesigning_identity: "Apple Distribution"
+    )
+
+    # .ipa 파일 경로 설정
+    ipa_path = File.join(ipa_output_path, "#{project_name}.ipa")
+
+    unless File.exist?(ipa_path)
+      UI.user_error!("[AppSealing] IPA file not found at path: #{ipa_path}")
+    end
+
+    UI.message "[AppSealing] IPA Path: #{ipa_path}"
+
+    # generate_hash 스크립트 경로 동적 검색
+    generate_hash_script = File.join(project_root, "AppSealingSDK", "Tools", "generate_hash")
+    unless File.exist?(generate_hash_script)
+      UI.user_error!("[AppSealing] generate_hash script not found at path: #{generate_hash_script}")
+    end
+    
+    # 실행 권한 확인 및 설정
+    unless File.executable?(generate_hash_script)
+      sh("chmod +x '#{generate_hash_script}'")
+    end    
+    sh("'#{generate_hash_script}' '#{File.absolute_path(ipa_path)}'")
+
+     # Step 2: Upload the IPA to TestFlight with callback
+    begin
+      upload_to_testflight(
+        ipa: ipa_path,
+        api_key: {
+          key_id: KEY_ID,
+          issuer_id: ISSUER_ID,
+          key: PRIVATE_KEY_CONTENT
+        },
+        skip_waiting_for_build_processing: true, # 빌드 처리 대기 시간 생략
+      )      
+      UI.success("[AppSealing] Upload to TestFlight completed successfully!")
+      
+    rescue => e
+      UI.error("[AppSealing] Upload to TestFlight failed with error: #{e.message}")
+      raise e
+      
+    ensure
+      # Always delete the build directory, even if an error occurs
+      if Dir.exist?(ipa_output_path)
+        UI.message("[AppSealing] Deleting build directory: #{ipa_output_path}")
+        FileUtils.rm_rf(ipa_output_path)
+        UI.message("[AppSealing] Build directory deleted.")
+      else
+        UI.message("[AppSealing] Build directory not found or already deleted.")
+      end
+    end
+  end
+end

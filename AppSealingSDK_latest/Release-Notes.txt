@@ -1,0 +1,140 @@
+==========================================
+	AppSealing SDK Release Notes
+==========================================
+
+Version 1.10.0.0 (January 31, 2025)
+	- Support Fastlane script for Xcode, Flutter, Unity3D, Cordova, Ionic, React Native project
+	- Support React Native 0.74.3, 0.75.x, 0.76.x
+	- Improved generate_hash to remove App Store Connect upload error after re-signing
+	- Fixed occasional Unity3D app crash due to anti-hooking logic
+	- Deprecated support for Xamarin project
+	- Deprecated support for React Native 0.64.x ~ 0.70.x
+
+Version 1.9.0.0 (June 3, 2024)
+	- Support anti-swizzling, anti-hooking and enhanced jailbreak detection
+	- Support Xcode Cloud integration
+	- Support React Native 0.74.x
+
+Version 1.8.0.0 (April 3, 2024)
+	- Support distribution without App Store & TestFlight when "AdhocEnabled" SDK is used
+	- Manual authorization step for “generate_genesis” when applying AppSelaing SDK has removed
+
+Version 1.7.0.0 (December 25, 2023)
+	- Support String Encryption for Swift / Objecti27ve-C
+	- Fix upload error of Xamarin app with capability
+
+Version 1.6.0.0 (October 19, 2023)
+	- Support React Native 0.72.x
+	- Improved internal cryptography robustness 
+	- Added automatic internal API call to prevent app termination
+	- Fixed certificate parsing error
+	- Fixed app termination in unstable network connection
+	- Fixed App Store Connect upload error
+
+Version 1.5.3.0.c (September 12, 2023)
+	- Support React-Native 0.72.x
+	- Fix certificate parsing error
+
+Version 1.5.2.0 (July 23, 2023)
+	- Fix Apple store certificate information
+
+Version 1.5.0.0 (July 13, 2023)
+	- Improved code stablity for sqlite3_free_table crash log
+	- Support React Native 0.71.x
+	- Support dynamic whitelist for Assets.car file in app package
+	- Support dynamic update for App Store certificate verification template
+
+Version 1.4.0.0 (January 11, 2023)
+	- Support Xamarin via Visual Studio for MAC
+	- Support React Native 0.67.x / 0.68.x / 0.69.x / 0.70.x
+	- Improved jailbreak detection by server-side credential verfication
+	- Improved code stablity for crash rate reduction
+
+Version 1.3.4.0 (November 15, 2022)
+	- Fixed generate_hash script corrupting integrity
+
+Version 1.3.3.0 (November 3, 2022)
+	- Support Microsoft Authentication Library
+
+Version 1.3.2.0 (October 19, 2022)
+	- Support enterprise distribution for HDFC
+
+Version 1.3.1.0 (September 21, 2022)
+	- Fixed team ID verfication false-positive failure
+	- Fixed Xcode link error for simulator
+
+Version 1.3.0.0 (August 22, 2022)
+	- Improved OpenSSL, BoringSSL, GRPC library compatibility
+	- Fixed generate_hash script freezing phenomenon
+
+Version 1.2.1.0 (May 10, 2022)
+	- Fixed jailbreak detection false positive error in iOS 15
+
+Version 1.2.0.0 (April 06, 2022)
+	- Improved Jailbreak detection
+          Improved the detection of the bypassed jailbreak environment by using bypass tools such as A-Bypass in 64bit OS environment.
+	- Improved malicious dynamic inject detection
+          Improved to detect malicious tools that can be used for reverse engineering of the app.
+	  e.g.) MobileSubstrate, CydiaSubstrate, frida, cycript, SSLKillSwitch
+	- Fixed app integrity check failure when the app includes file with name containing comma.
+
+Version 1.1.7.0 (December 21, 2021)
+	- Support Flutter app
+	- Fixed app integrity check failure when very large number of files included in app
+
+Version 1.1.6.0 (October 18, 2021)
+	- Fixed app integrity check failure when Plugins/ items included
+
+Version 1.1.5.1 (August 26, 2021)
+	- Fixed sudden app termination in about 20 seconds after launching the app
+	  in case an app is newly distributed or updated in the Apple Store after June 21, 2021.
+
+Version 1.1.5.0 (July 5, 2021)
+    - Support using 3rd-party library built with Boring-SSL (e.g. GRPC library)
+	    Fixed runtime crash when running the app which includes Boring-SSL or Boring-SSL based library.
+		Crash at unity app with GRPC asset has also fixed.
+
+Version 1.1.4.0 (May 11, 2021)
+    - Improved Stability
+        Improvements have been made in areas where a crash can occur in the process of automatically closing an app when a security threat is detected.
+
+Version 1.1.3.0 (January 5, 2021)
+	- Re-signing Script error fixed
+        Fixed ITMS-90035 error when uploading re-signed IPA to App Store Connect and script error with empty "Associated Domains" capability enabled IPA.
+
+Version 1.1.3.0 (January 5, 2021)
+	- Re-signing Script error fixed
+        Fixed ITMS-90035 error when uploading re-signed IPA to App Store Connect and script error with empty "Associated Domains" capability enabled IPA.
+
+Version 1.1.2.0 (December 15, 2020)
+	- Re-signing Script error fixed
+		Fixed ITMS-90046 error when uploading re-signed IPA to App Store Connect with "Associated Domains" capability enabled IPA.
+		Fixed script error when re-signing an IPA which has project name with space.
+
+Version 1.1.1.0 (December 10, 2020)
+	- Fixed error on SDK libraries
+		"Invalid bitcode version" link error occurs in Xcode 11.7 or lower version.
+
+Version 1.1.0.0 (November 25, 2020)
+	- Add feature 'Improved Integrity check'
+	- Add feature 'Re-signing detection'
+	- Add feature 'Support Unreal Engine plugin'
+
+
+Version 1.0.11.0 (May.12.2020)
+	- Support Unity 2020
+		iOS AppSealing 1.0.11.0 version supports Unity Engine 2020 version.
+		AppSealing is constantly updating to support Unity's latest engine versions. 
+
+	- Fixed error on SDK documents
+		SDK guide document updated to resolve an error that integrity verification function 
+		is not applied if copy and paste the script of the SDK document. 
+ 
+
+Version 1.0.0 (April 5, 2019)
+	- Add feature 'Jailbreak detection'
+	- Add feature 'Anti-debugging'
+	- Add feature 'Not encrypted executable file detection'
+	- Add feature 'integrity check'
+
+
