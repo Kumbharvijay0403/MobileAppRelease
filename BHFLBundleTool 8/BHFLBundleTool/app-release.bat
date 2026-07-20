@@ -1,0 +1,1 @@
+start cmd.exe /c "java -jar bundletool.jar build-apks --local-testing --bundle=app-release.aab  --output=appRelease.apks  --ks=bhflkeystore.jks --ks-pass=file:keystore.pwd --ks-key-alias=bhfl --key-pass=file:keystore.pwd --mode=universal"
