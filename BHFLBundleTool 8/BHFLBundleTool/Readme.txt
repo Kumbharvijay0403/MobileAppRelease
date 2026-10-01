@@ -25,6 +25,7 @@ c. copy bhflkeystore.jks file also in that folder
 d. Open cmd in that folder and enter below command for signing
 
 jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore bhflkeystore.jks BHFL_PROD_1.4.0_Testing23Oct_sealed.aab bhfl
+bhfl@123
 ======================
 where,  bhflkeystore.jks is keystore , BHFL_Prod_V_1.0.1_sealed.aab is file to sign , bhfl is aliasname
  
